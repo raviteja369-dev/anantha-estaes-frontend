@@ -1,18 +1,19 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { employeesAPI } from '@/services/api'
 import DataTable from '@/components/shared/DataTable'
 import PageLoader from '@/components/shared/PageLoader'
+import PhoneInput from '@/components/shared/PhoneInput'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, isValidMobile, getNextEmployeeCode } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 const emptyForm = {
-  employeeCode: '', name: '', mobile: '', email: '', address: '', salesTarget: '', password: '', joiningDate: '',
+  name: '', mobile: '', email: '', address: '', salesTarget: '', password: '', joiningDate: '',
 }
 
 export default function Employees() {
@@ -23,6 +24,8 @@ export default function Employees() {
   const [error, setError] = useState('')
 
   const { data: employees, isLoading } = useQuery({ queryKey: ['employees'], queryFn: () => employeesAPI.getAll().then((r) => r.data) })
+
+  const nextEmployeeCode = useMemo(() => getNextEmployeeCode(employees), [employees])
 
   const createMutation = useMutation({
     mutationFn: (data) => employeesAPI.create(data),
@@ -65,7 +68,7 @@ export default function Employees() {
   const openEdit = (emp) => {
     setEditEmp(emp)
     setForm({
-      employeeCode: emp.employeeCode, name: emp.name, mobile: emp.mobile, email: emp.email,
+      name: emp.name, mobile: emp.mobile, email: emp.email,
       address: emp.address, salesTarget: emp.salesTarget, password: '', joiningDate: emp.joiningDate?.split('T')[0] || '',
     })
     setError('')
@@ -73,7 +76,6 @@ export default function Employees() {
   }
 
   const buildPayload = () => ({
-    employeeCode: form.employeeCode.trim(),
     name: form.name.trim(),
     mobile: form.mobile.trim(),
     email: form.email.trim().toLowerCase(),
@@ -87,8 +89,12 @@ export default function Employees() {
     e.preventDefault()
     setError('')
 
-    if (!form.employeeCode.trim() || !form.name.trim() || !form.mobile.trim() || !form.email.trim()) {
-      setError('Employee ID, name, mobile, and email are required')
+    if (!form.name.trim() || !form.mobile.trim() || !form.email.trim()) {
+      setError('Name, mobile, and email are required')
+      return
+    }
+    if (!isValidMobile(form.mobile)) {
+      setError('Mobile number must be exactly 10 digits and start with 6-9')
       return
     }
     if (!editEmp && !form.password) {
@@ -131,13 +137,28 @@ export default function Employees() {
             {error && (
               <div className="rounded-lg bg-destructive/10 text-destructive text-sm p-3 text-center">{error}</div>
             )}
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>Employee ID</Label><Input value={form.employeeCode} onChange={(e) => setForm({ ...form, employeeCode: e.target.value })} required /></div>
-              <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
+            <div>
+              <Label>Employee ID</Label>
+              <Input
+                value={editEmp ? editEmp.employeeCode : nextEmployeeCode}
+                disabled
+                className="bg-muted font-mono"
+              />
+              {!editEmp && <p className="text-xs text-muted-foreground mt-1">Auto-assigned on create</p>}
+            </div>
+            <div>
+              <Label>Name</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div><Label>Mobile</Label><Input value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} required /></div>
-              <div><Label>Email</Label><Input type="text" inputMode="email" autoComplete="off" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
+              <div>
+                <Label>Mobile</Label>
+                <PhoneInput value={form.mobile} onChange={(v) => setForm({ ...form, mobile: v })} required />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input type="text" inputMode="email" autoComplete="off" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+              </div>
             </div>
             {!editEmp && <div><Label>Password</Label><Input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required /></div>}
             <div><Label>Address</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>

@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard, Map, Grid3X3, Users, UserCircle, Calendar,
-  CreditCard, FileText, BarChart3, Settings, LogOut, Building2, UserPlus, MapPin
+  CreditCard, BarChart3, Settings, LogOut, Building2, UserPlus, MapPin
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -19,7 +19,6 @@ const adminLinks = [
   { to: '/bookings', icon: Calendar, label: 'Bookings' },
   { to: '/payments', icon: CreditCard, label: 'Payments' },
   { to: '/site-visits', icon: MapPin, label: 'Site Visits' },
-  { to: '/documents', icon: FileText, label: 'Documents' },
   { to: '/reports', icon: BarChart3, label: 'Reports' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]

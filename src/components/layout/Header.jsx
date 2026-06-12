@@ -19,7 +19,6 @@ const routeTitles = {
   '/bookings': 'Bookings',
   '/payments': 'Payments',
   '/site-visits': 'Site Visits',
-  '/documents': 'Documents',
   '/reports': 'Reports',
   '/settings': 'Settings',
   '/employee/dashboard': 'Employee Dashboard',

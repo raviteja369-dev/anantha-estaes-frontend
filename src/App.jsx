@@ -15,7 +15,6 @@ import Leads from '@/pages/Leads'
 import Bookings from '@/pages/Bookings'
 import Payments from '@/pages/Payments'
 import SiteVisits from '@/pages/SiteVisits'
-import Documents from '@/pages/Documents'
 import Reports from '@/pages/Reports'
 import Settings from '@/pages/Settings'
 import EmployeeDashboard from '@/pages/employee/EmployeeDashboard'
@@ -46,7 +45,6 @@ export default function App() {
                 <Route path="/bookings" element={<Bookings />} />
                 <Route path="/payments" element={<Payments />} />
                 <Route path="/site-visits" element={<SiteVisits />} />
-                <Route path="/documents" element={<Documents />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
               </Route>
