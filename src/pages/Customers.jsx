@@ -22,8 +22,6 @@ import { Label } from '@/components/ui/label'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-import { Badge } from '@/components/ui/badge'
-
 import PhoneInput from '@/components/shared/PhoneInput'
 
 import { isValidMobile } from '@/lib/utils'
@@ -190,17 +188,9 @@ export default function Customers() {
 
     { key: 'email', label: 'Email', render: (r) => r.email || '—' },
 
-    ...(isAdmin ? [{ key: 'employee', label: 'Employee', render: (r) => r.assignedEmployee?.name || '—' }] : []),
+    { key: 'address', label: 'Address', render: (r) => r.address || '—', className: 'max-w-[200px]' },
 
-    { key: 'followUp', label: 'Follow-up', render: (r) => (
-
-      <Badge variant={r.followUpStatus === 'interested' ? 'success' : r.followUpStatus === 'contacted' ? 'info' : 'secondary'}>
-
-        {r.followUpStatus}
-
-      </Badge>
-
-    )},
+    { key: 'employee', label: 'Employee', render: (r) => r.assignedEmployee?.name || '—' },
 
     {
 

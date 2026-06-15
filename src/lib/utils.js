@@ -36,7 +36,20 @@ export function getNextEmployeeCode(employees = []) {
 
 export const PLOT_STATUS = {
   available: { label: 'Available', color: 'bg-green-500', class: 'plot-available' },
+  pending: { label: 'Pending', color: 'bg-blue-500', class: 'plot-pending' },
   reserved: { label: 'Reserved', color: 'bg-orange-500', class: 'plot-reserved' },
   sold: { label: 'Sold', color: 'bg-red-500', class: 'plot-sold' },
+  cancelled: { label: 'Cancelled', color: 'bg-slate-400', class: 'plot-cancelled' },
   under_processing: { label: 'Under Processing', color: 'bg-blue-500', class: 'plot-processing' },
+}
+
+/** Admin or assigned employee on the plot booking */
+export function canManageBooking(user, plot, employeeId) {
+  if (!user || !plot) return false
+  if (user.role === 'super_admin') return true
+  if (user.role === 'employee' && employeeId && plot.assignedEmployee) {
+    const assigned = plot.assignedEmployee._id || plot.assignedEmployee
+    return String(assigned) === String(employeeId)
+  }
+  return false
 }

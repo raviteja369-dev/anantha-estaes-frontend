@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(222 47% 11%);
   --color-card: hsl(0 0% 100%);
@@ -74,6 +75,41 @@ body {
 .dark .glass {
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #e2e8f0;
+}
+
+.dark .glass-panel {
+  background: rgba(8, 12, 22, 0.92);
+  color: #e2e8f0;
+}
+
+/* Layout designer floats on dark canvas — always use light text on glass panels */
+.designer-ui {
+  color: #e2e8f0;
+}
+
+.designer-ui .glass-panel,
+.designer-ui.glass-panel {
+  color: #e2e8f0;
+}
+
+.designer-ui label,
+.designer-ui [data-slot="label"] {
+  color: #cbd5e1;
+}
+
+.designer-ui input,
+.designer-ui textarea,
+.designer-ui [role="combobox"] {
+  color: #f1f5f9;
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .gradient-bg {

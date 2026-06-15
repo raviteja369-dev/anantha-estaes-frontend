@@ -39,6 +39,7 @@ export const projectsAPI = {
 }
 
 export const phasesAPI = {
+  getAll: (params) => api.get('/phases', { params }),
   getByProject: (projectId) => api.get(`/phases/project/${projectId}`),
   create: (data) => api.post('/phases', data),
   update: (id, data) => api.put(`/phases/${id}`, data),
@@ -46,11 +47,14 @@ export const phasesAPI = {
 }
 
 export const plotsAPI = {
+  getPublishedLayouts: () => api.get('/plots', { params: { status: 'published' } }),
   getAll: (params) => api.get('/plots', { params }),
   getById: (id) => api.get(`/plots/${id}`),
   create: (data) => api.post('/plots', data),
   update: (id, data) => api.put(`/plots/${id}`, data),
   updateStatus: (id, data) => api.patch(`/plots/${id}/status`, data),
+  createBooking: (id, data) => api.patch(`/plots/${id}/book`, data),
+  updateBookingStatus: (id, data) => api.patch(`/plots/${id}/booking-status`, data),
   transfer: (id, data) => api.patch(`/plots/${id}/transfer`, data),
   updatePosition: (id, data) => api.patch(`/plots/${id}/position`, data),
   bulkPositions: (updates) => api.patch('/plots/positions/bulk', { updates }),
@@ -58,6 +62,7 @@ export const plotsAPI = {
 }
 
 export const employeesAPI = {
+  getDropdown: () => api.get('/employees/dropdown'),
   getAll: () => api.get('/employees'),
   getById: (id) => api.get(`/employees/${id}`),
   create: (data) => api.post('/employees', data),
@@ -102,6 +107,23 @@ export const reportsAPI = {
   revenue: () => api.get('/reports/revenue'),
   employeePerformance: () => api.get('/reports/employee-performance'),
   employeeDashboard: () => api.get('/reports/employee-dashboard'),
+}
+
+export const layoutsAPI = {
+  getByPhase: (phaseId, params) => api.get(`/layouts/phase/${phaseId}`, { params }),
+  getById: (layoutId) => api.get(`/layouts/${layoutId}`),
+  create: (data) => api.post('/layouts', data),
+  save: (layoutId, data) => api.put(`/layouts/${layoutId}`, data),
+  duplicate: (layoutId) => api.post(`/layouts/${layoutId}/duplicate`),
+  delete: (layoutId) => api.delete(`/layouts/${layoutId}`),
+  /** @deprecated */
+  getByProject: (projectId) => api.get(`/layouts/project/${projectId}`),
+  /** @deprecated */
+  saveByProject: (projectId, data) => api.put(`/layouts/project/${projectId}`, data),
+}
+
+export const notificationsAPI = {
+  getAll: () => api.get('/notifications'),
 }
 
 export default api

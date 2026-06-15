@@ -127,6 +127,17 @@ export default function PlotFormDialog({ open, onOpenChange, plot, projects, pha
               </SelectContent>
             </Select>
           </div>
+          {customers?.length > 0 && (
+            <div>
+              <Label>Customer</Label>
+              <Select value={form.customer} onValueChange={(v) => setForm({ ...form, customer: v })}>
+                <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
+                <SelectContent>
+                  {customers.map((c) => <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div>
             <Label>Notes</Label>
             <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus } from 'lucide-react'
+import { Plus, Pencil } from 'lucide-react'
 import { siteVisitsAPI, projectsAPI, plotsAPI, employeesAPI, customersAPI } from '@/services/api'
 import DataTable from '@/components/shared/DataTable'
 import PageLoader from '@/components/shared/PageLoader'
@@ -10,7 +10,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/context/AuthContext'
+import { cn } from '@/lib/utils'
+
+const VISIT_STATUSES = ['scheduled', 'completed', 'cancelled', 'rescheduled']
+
+const statusVariant = {
+  scheduled: 'info',
+  completed: 'success',
+  cancelled: 'destructive',
+  rescheduled: 'warning',
+}
 
 const emptyForm = {
   customer: '', project: '', plot: '', scheduledDate: '', notes: '', assignedEmployee: '',
@@ -20,6 +31,11 @@ export default function SiteVisits() {
   const { user, isAdmin } = useAuth()
   const queryClient = useQueryClient()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editVisit, setEditVisit] = useState(null)
+  const [editForm, setEditForm] = useState({ status: 'scheduled', feedback: '' })
+  const [remarkError, setRemarkError] = useState(false)
+  const [editError, setEditError] = useState('')
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
 
@@ -53,7 +69,16 @@ export default function SiteVisits() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => siteVisitsAPI.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['site-visits'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['site-visits'] })
+      setEditOpen(false)
+      setEditVisit(null)
+      setRemarkError(false)
+      setEditError('')
+    },
+    onError: (err) => {
+      setEditError(err.response?.data?.message || 'Failed to update site visit')
+    },
   })
 
   const openDialog = () => {
@@ -63,6 +88,46 @@ export default function SiteVisits() {
     })
     setError('')
     setDialogOpen(true)
+  }
+
+  const openEdit = (visit) => {
+    setEditVisit(visit)
+    setEditForm({
+      status: visit.status || 'scheduled',
+      feedback: visit.feedback || '',
+    })
+    setRemarkError(false)
+    setEditError('')
+    setEditOpen(true)
+  }
+
+  const handleEditStatusChange = (status) => {
+    setEditForm((prev) => ({ ...prev, status }))
+    if (status !== 'completed') {
+      setRemarkError(false)
+      setEditError('')
+    }
+  }
+
+  const handleEditFeedbackChange = (value) => {
+    setEditForm((prev) => ({ ...prev, feedback: value }))
+    if (value.trim()) setRemarkError(false)
+  }
+
+  const handleEditDone = () => {
+    setEditError('')
+    if (editForm.status === 'completed' && !editForm.feedback.trim()) {
+      setRemarkError(true)
+      setEditError('Please write a remark before marking this visit as completed.')
+      return
+    }
+    updateMutation.mutate({
+      id: editVisit._id,
+      data: {
+        status: editForm.status,
+        feedback: editForm.feedback.trim(),
+      },
+    })
   }
 
   const handleCustomerChange = (customerId) => {
@@ -120,16 +185,34 @@ export default function SiteVisits() {
     { key: 'plot', label: 'Plot', render: (r) => r.plot?.plotNumber || '—' },
     { key: 'customer', label: 'Customer', render: (r) => r.customer?.name || r.lead?.name || '—' },
     { key: 'employee', label: 'Employee', render: (r) => r.assignedEmployee?.name || '—' },
-    { key: 'status', label: 'Status', render: (r) => (
-      <Select value={r.status} onValueChange={(v) => updateMutation.mutate({ id: r._id, data: { status: v } })}>
-        <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
-        <SelectContent>
-          {['scheduled', 'completed', 'cancelled', 'rescheduled'].map((s) => (
-            <SelectItem key={s} value={s}>{s}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    )},
+    {
+      key: 'status',
+      label: 'Status',
+      render: (r) => (
+        <Badge variant={statusVariant[r.status] || 'secondary'}>
+          {r.status}
+        </Badge>
+      ),
+    },
+    {
+      key: 'remark',
+      label: 'Remark',
+      render: (r) => (
+        <span className="text-muted-foreground text-xs max-w-[180px] truncate block" title={r.feedback}>
+          {r.feedback || '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: '',
+      render: (r) => (
+        <Button variant="ghost" size="sm" className="h-8 gap-1" onClick={() => openEdit(r)}>
+          <Pencil className="h-3.5 w-3.5" />
+          Edit
+        </Button>
+      ),
+    },
   ]
 
   if (isLoading) return <PageLoader />
@@ -139,7 +222,73 @@ export default function SiteVisits() {
       <div className="flex justify-end">
         <Button onClick={openDialog}><Plus className="h-4 w-4" /> Schedule Visit</Button>
       </div>
-      <DataTable columns={columns} data={visits} emptyMessage="No site visits scheduled" />
+      <DataTable columns={columns} data={visits} emptyMessage="No site visits scheduled" onRowClick={openEdit} />
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Site Visit</DialogTitle>
+          </DialogHeader>
+
+          {editVisit && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm grid grid-cols-2 gap-2">
+                <span>Customer: <strong>{editVisit.customer?.name || editVisit.lead?.name}</strong></span>
+                <span>Plot: <strong>{editVisit.plot?.plotNumber || '—'}</strong></span>
+                <span>Project: <strong>{editVisit.project?.name || '—'}</strong></span>
+                <span>Date: <strong>{new Date(editVisit.scheduledDate).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</strong></span>
+              </div>
+
+              {editError && (
+                <div className="rounded-lg bg-destructive/10 text-destructive text-sm p-3 text-center">{editError}</div>
+              )}
+
+              <div>
+                <Label>Status</Label>
+                <Select value={editForm.status} onValueChange={handleEditStatusChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {VISIT_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>
+                  Remark
+                  {editForm.status === 'completed' && <span className="text-destructive ml-1">*</span>}
+                </Label>
+                <Textarea
+                  value={editForm.feedback}
+                  onChange={(e) => handleEditFeedbackChange(e.target.value)}
+                  placeholder={editForm.status === 'completed' ? 'Required — describe the visit outcome' : 'Optional notes about this visit'}
+                  className={cn(
+                    'mt-1',
+                    remarkError && 'border-destructive ring-2 ring-destructive/30 focus-visible:ring-destructive'
+                  )}
+                  rows={4}
+                />
+                {remarkError && (
+                  <p className="text-xs text-destructive mt-1.5 font-medium">
+                    Remark is required when status is completed.
+                  </p>
+                )}
+              </div>
+
+              <Button
+                className="w-full"
+                onClick={handleEditDone}
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending ? 'Saving...' : 'Done'}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader><DialogTitle>Schedule Site Visit</DialogTitle></DialogHeader>
@@ -230,4 +379,3 @@ export default function SiteVisits() {
     </div>
   )
 }
-

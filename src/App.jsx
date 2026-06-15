@@ -8,6 +8,8 @@ import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import Projects from '@/pages/Projects'
 import PlotLayout from '@/pages/PlotLayout'
+import LayoutDesignerPage from '@/pages/LayoutDesignerPage'
+import LayoutViewerPage from '@/pages/LayoutViewerPage'
 import Plots from '@/pages/Plots'
 import Employees from '@/pages/Employees'
 import Customers from '@/pages/Customers'
@@ -49,8 +51,19 @@ export default function App() {
                 <Route path="/settings" element={<Settings />} />
               </Route>
 
+              <Route
+                path="/layout-viewer/:layoutId"
+                element={<ProtectedRoute><LayoutViewerPage /></ProtectedRoute>}
+              />
+
+              <Route
+                path="/layout-designer/:layoutId"
+                element={<ProtectedRoute adminOnly><LayoutDesignerPage /></ProtectedRoute>}
+              />
+
               <Route element={<ProtectedRoute employeeOnly><DashboardLayout /></ProtectedRoute>}>
                 <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+                <Route path="/employee/plot-layout" element={<PlotLayout />} />
                 <Route path="/employee/plots" element={<Plots />} />
                 <Route path="/employee/customers" element={<Customers />} />
                 <Route path="/employee/leads" element={<Leads />} />

@@ -25,9 +25,10 @@ const adminLinks = [
 
 const employeeLinks = [
   { to: '/employee/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/employee/plots', icon: Grid3X3, label: 'My Plots' },
-  { to: '/employee/customers', icon: UserCircle, label: 'My Customers' },
-  { to: '/employee/leads', icon: UserPlus, label: 'My Leads' },
+  { to: '/employee/plot-layout', icon: Map, label: 'Plot Layout' },
+  { to: '/employee/plots', icon: Grid3X3, label: 'Plots' },
+  { to: '/employee/customers', icon: UserCircle, label: 'Customers' },
+  { to: '/employee/leads', icon: UserPlus, label: 'Leads' },
   { to: '/employee/site-visits', icon: MapPin, label: 'Site Visits' },
   { to: '/employee/performance', icon: BarChart3, label: 'Performance' },
 ]
@@ -51,7 +52,9 @@ export default function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {links.map((link) => {
-          const isActive = location.pathname === link.to || location.pathname.startsWith(link.to + '/')
+          const isActive = location.pathname === link.to
+            || location.pathname.startsWith(link.to + '/')
+            || (link.to.includes('plot-layout') && (location.pathname.startsWith('/layout-designer') || location.pathname.startsWith('/layout-viewer')))
           return (
             <NavLink key={link.to} to={link.to}>
               <motion.div
