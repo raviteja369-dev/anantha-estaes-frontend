@@ -14,7 +14,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://annatha-esates-backend-production.up.railway.app',
         changeOrigin: true,
       },
     },
