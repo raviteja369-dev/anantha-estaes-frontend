@@ -71,7 +71,7 @@ export default function DesignerTopBar({
 
       <div className="flex items-center gap-1 shrink-0">
         {viewMode && onEditLayout && (
-          <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 mr-1" onClick={onEditLayout}>
+          <Button size="sm" className="h-8 text-xs bg-[#2563EB] hover:bg-[#1D4ED8] mr-1" onClick={onEditLayout}>
             <Pencil className="h-3.5 w-3.5 mr-1" />
             Edit Layout
           </Button>
@@ -80,7 +80,7 @@ export default function DesignerTopBar({
         {!viewMode && !readOnly && onCreateLayout && (
           <Button
             size="sm"
-            className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 mr-1 hidden sm:inline-flex"
+            className="h-8 text-xs bg-[#2563EB] hover:bg-[#1D4ED8] mr-1 hidden sm:inline-flex"
             onClick={onCreateLayout}
           >
             <Plus className="h-3.5 w-3.5 mr-1" />

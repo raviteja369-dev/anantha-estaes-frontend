@@ -48,7 +48,7 @@ export default function DesignerPropertyPanel({ phases, employees }) {
                   <Switch
                     checked={isVisible}
                     onCheckedChange={() => toggleLayer(layer)}
-                    className="data-[state=checked]:bg-indigo-600"
+                    className="data-[state=checked]:bg-[#2563EB]"
                   />
                   <button
                     type="button"

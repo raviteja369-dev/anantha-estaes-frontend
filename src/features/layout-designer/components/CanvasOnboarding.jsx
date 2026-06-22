@@ -17,7 +17,7 @@ export default function CanvasOnboarding({ onImport, canvasWidth, canvasHeight }
     <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
       <div className="pointer-events-auto max-w-md text-center px-6">
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-lg border border-slate-200">
-          <Map className="h-10 w-10 text-indigo-500" />
+          <Map className="h-10 w-10 text-[#2563EB]" />
         </div>
         <h2 className="text-xl font-semibold text-slate-800">Start Designing Your Layout</h2>
         <p className="mt-2 text-sm text-slate-500 leading-relaxed">
@@ -33,7 +33,7 @@ export default function CanvasOnboarding({ onImport, canvasWidth, canvasHeight }
             <span className="text-xs font-medium">Create Road</span>
           </Button>
           <Button variant="outline" className="h-auto py-4 flex-col gap-2 bg-white" onClick={() => start('import')}>
-            <Upload className="h-5 w-5 text-indigo-600" />
+            <Upload className="h-5 w-5 text-[#2563EB]" />
             <span className="text-xs font-medium">Import Layout</span>
           </Button>
         </div>

@@ -47,7 +47,7 @@ function PhaseList({ plotId, plotName, expanded, phaseSearch, selectedPhaseId, o
           className={cn(
             'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-all',
             selectedPhaseId === phase._id
-              ? 'bg-indigo-50 text-indigo-700 font-medium'
+              ? 'bg-primary/10 text-primary font-medium'
               : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
           )}
         >
@@ -90,7 +90,7 @@ export default function PlotLayoutTree({ selectedPlotId, selectedPhaseId, onPhas
     <aside className="flex w-[280px] shrink-0 flex-col border-r border-slate-200 bg-white">
       <div className="border-b border-slate-100 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Map className="h-4 w-4 text-indigo-600" />
+          <Map className="h-4 w-4 text-primary" />
           <h2 className="text-sm font-semibold text-slate-900">Plot Layout</h2>
         </div>
         <div className="relative">
@@ -100,7 +100,7 @@ export default function PlotLayoutTree({ selectedPlotId, selectedPhaseId, onPhas
             placeholder="Search plots…"
             value={plotSearch}
             onChange={(e) => setPlotSearch(e.target.value)}
-            className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 pl-8 pr-3 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 pl-8 pr-3 text-sm outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
           />
         </div>
         {expandedPlots.size > 0 && (
@@ -111,7 +111,7 @@ export default function PlotLayoutTree({ selectedPlotId, selectedPhaseId, onPhas
               placeholder="Search phases…"
               value={phaseSearch}
               onChange={(e) => setPhaseSearch(e.target.value)}
-              className="w-full h-8 rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-xs outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full h-8 rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-xs outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
             />
           </div>
         )}
@@ -140,7 +140,7 @@ export default function PlotLayoutTree({ selectedPlotId, selectedPhaseId, onPhas
                     className={cn(
                       'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm font-medium transition-all',
                       selectedPlotId === plot._id && !selectedPhaseId
-                        ? 'bg-indigo-50 text-indigo-700'
+                        ? 'bg-primary/10 text-primary'
                         : 'text-slate-700 hover:bg-slate-50'
                     )}
                   >

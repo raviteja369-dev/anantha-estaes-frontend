@@ -28,7 +28,7 @@ export default function QuickActionBar({ canvasWidth, canvasHeight }) {
               onClick={() => handleQuickAdd(action.id)}
               className={cn(
                 'group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3',
-                'hover:border-indigo-300 hover:shadow-md transition-all shrink-0 min-w-[140px]'
+                'hover:border-[#93C5FD] hover:shadow-md transition-all shrink-0 min-w-[140px]'
               )}
             >
               <div className={cn('flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-sm', action.color)}>

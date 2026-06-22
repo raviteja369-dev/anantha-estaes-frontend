@@ -112,7 +112,7 @@ export default function BookingFormDialog({
 
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={loading || !customer || !assignedEmployee}>
+            <Button type="submit" disabled={loading || !customer || !assignedEmployee}>
               {loading ? 'Creating…' : 'Confirm Booking'}
             </Button>
           </div>

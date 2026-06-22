@@ -81,7 +81,7 @@ export const AMENITY_TYPES = [
   { id: 'school', label: 'School', icon: '🏫', color: '#3B82F6' },
   { id: 'hospital', label: 'Hospital', icon: '🏥', color: '#EF4444' },
   { id: 'shopping', label: 'Shopping Complex', icon: '🛒', color: '#EC4899' },
-  { id: 'office', label: 'Office Building', icon: '🏢', color: '#6366F1' },
+  { id: 'office', label: 'Office Building', icon: '🏢', color: '#2563EB' },
   { id: 'parking', label: 'Parking Area', icon: '🅿️', color: '#64748B' },
   { id: 'gate', label: 'Security Gate', icon: '🚧', color: '#78716C' },
   { id: 'tank', label: 'Water Tank', icon: '💧', color: '#0EA5E9' },

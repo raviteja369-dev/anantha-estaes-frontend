@@ -126,7 +126,7 @@ export default function Minimap({ canvasWidth, canvasHeight }) {
 
             height={vpH * scale}
 
-            stroke="#6366F1"
+            stroke="#2563EB"
 
             strokeWidth={1.5}
 

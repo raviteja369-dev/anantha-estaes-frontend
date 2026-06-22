@@ -26,7 +26,7 @@ export default function PlotShapePicker({ value, onChange, disabled, compact = f
               'flex flex-col items-center justify-center rounded-lg border transition-all',
               compact ? 'px-1 py-2' : 'px-2 py-3',
               active
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
+                ? 'border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8] shadow-sm'
                 : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50',
               disabled && 'opacity-50 pointer-events-none'
             )}

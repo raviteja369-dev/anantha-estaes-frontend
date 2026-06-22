@@ -54,8 +54,8 @@ export default function PhaseLayoutsList({ layouts, plotName, phaseName, isLoadi
   if (!layouts?.length) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
-          <LayoutTemplate className="h-7 w-7 text-indigo-600" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+          <LayoutTemplate className="h-7 w-7 text-primary" />
         </div>
         <h3 className="text-lg font-semibold text-slate-900">No Layouts</h3>
         <p className="mt-2 max-w-sm text-sm text-slate-500">
@@ -108,7 +108,7 @@ export default function PhaseLayoutsList({ layouts, plotName, phaseName, isLoadi
               <>
                 <Button
                   size="sm"
-                  className="h-8 text-xs flex-1 min-w-[100px] bg-indigo-600 hover:bg-indigo-700"
+                  className="h-8 text-xs flex-1 min-w-[100px]"
                   onClick={() => navigate(`/layout-designer/${layout._id}`)}
                 >
                   <Pencil className="h-3.5 w-3.5 mr-1" />

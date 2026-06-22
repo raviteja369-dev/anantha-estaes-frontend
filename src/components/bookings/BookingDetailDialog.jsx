@@ -90,7 +90,7 @@ export default function BookingDetailDialog({
               </SelectContent>
             </Select>
             <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full"
               disabled={updating || status === plot.status}
               onClick={handleSaveStatus}
             >

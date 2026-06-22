@@ -3,67 +3,70 @@ import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/context/ThemeContext'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useAuth } from '@/context/AuthContext'
 import NotificationsDropdown from './NotificationsDropdown'
+import ProfileMenu from './ProfileMenu'
 
-const routeTitles = {
-  '/dashboard': 'Dashboard',
-  '/projects': 'Projects',
-  '/plot-layout': 'Plot Layout',
-  '/plots': 'Plots',
-  '/employees': 'Employees',
-  '/customers': 'Customers',
-  '/leads': 'Leads',
-  '/bookings': 'Bookings',
-  '/payments': 'Payments',
-  '/site-visits': 'Site Visits',
-  '/reports': 'Reports',
-  '/settings': 'Settings',
-  '/employee/dashboard': 'Employee Dashboard',
-  '/employee/plot-layout': 'Plot Layout',
-  '/employee/plots': 'Plots',
-  '/employee/customers': 'Customers',
-  '/employee/leads': 'Leads',
-  '/employee/site-visits': 'Site Visits',
-  '/employee/performance': 'Performance',
+const routeMeta = {
+  '/dashboard': { title: 'Dashboard', subtitle: 'Portfolio overview & key metrics' },
+  '/projects': { title: 'Projects', subtitle: 'Manage your real estate developments' },
+  '/plot-layout': { title: 'Plot Layout', subtitle: 'Visualize and plan plot layouts' },
+  '/plots': { title: 'Plots', subtitle: 'Inventory of all plots' },
+  '/employees': { title: 'Employees', subtitle: 'Team members & roles' },
+  '/customers': { title: 'Customers', subtitle: 'Buyer records & relationships' },
+  '/leads': { title: 'Leads', subtitle: 'Prospects & sales pipeline' },
+  '/bookings': { title: 'Bookings', subtitle: 'Reservations & allotments' },
+  '/payments': { title: 'Payments', subtitle: 'Collections & receivables' },
+  '/site-visits': { title: 'Site Visits', subtitle: 'Scheduled property tours' },
+  '/reports': { title: 'Reports', subtitle: 'Analytics & insights' },
+  '/settings': { title: 'Settings', subtitle: 'Workspace configuration' },
+  '/employee/dashboard': { title: 'Dashboard', subtitle: 'Your performance overview' },
+  '/employee/plot-layout': { title: 'Plot Layout', subtitle: 'Visualize and plan plot layouts' },
+  '/employee/plots': { title: 'Plots', subtitle: 'Inventory of all plots' },
+  '/employee/customers': { title: 'Customers', subtitle: 'Buyer records & relationships' },
+  '/employee/leads': { title: 'Leads', subtitle: 'Prospects & sales pipeline' },
+  '/employee/site-visits': { title: 'Site Visits', subtitle: 'Scheduled property tours' },
+  '/employee/performance': { title: 'Performance', subtitle: 'Your targets & achievements' },
 }
 
 export default function Header() {
   const location = useLocation()
   const { dark, toggleTheme } = useTheme()
-  const { user } = useAuth()
 
-  const title = routeTitles[location.pathname] || 'Dashboard'
+  const meta = routeMeta[location.pathname] || { title: 'Dashboard', subtitle: '' }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-xl px-6">
-      <div>
-        <p className="text-xs text-muted-foreground">
-          Dashboard <span className="mx-1">›</span> {title}
-        </p>
+    <header className="glass-header sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border px-5 lg:px-8">
+      <div className="min-w-0">
         <motion.h1
-          key={title}
-          initial={{ opacity: 0, y: -5 }}
+          key={meta.title}
+          initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xl font-bold tracking-tight"
+          transition={{ duration: 0.25 }}
+          className="truncate text-lg font-bold tracking-tight text-foreground"
         >
-          {title}
+          {meta.title}
         </motion.h1>
+        {meta.subtitle && (
+          <p className="hidden truncate text-xs text-muted-foreground sm:block">{meta.subtitle}</p>
+        )}
       </div>
 
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
-          {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleTheme}
+          className="h-10 w-10 text-muted-foreground hover:text-foreground"
+          aria-label="Toggle theme"
+        >
+          {dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
         </Button>
 
         <NotificationsDropdown />
 
-        <Avatar className="h-8 w-8 cursor-pointer">
-          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-            {user?.name?.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
+        <div className="mx-1 hidden h-8 w-px bg-border sm:block" />
+
+        <ProfileMenu />
       </div>
     </header>
   )

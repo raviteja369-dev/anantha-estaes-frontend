@@ -54,15 +54,15 @@ export default function NotificationsDropdown() {
   return (
     <div className="relative" ref={panelRef}>
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
-        className="rounded-full relative"
+        className="relative h-10 w-10"
         onClick={() => setOpen((v) => !v)}
         aria-label="Notifications"
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#EF4444] ring-2 ring-card" />
         )}
       </Button>
 

@@ -28,7 +28,7 @@ function ToolItem({ tool, active, onClick }) {
       className={cn(
         'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all',
         active
-          ? 'bg-indigo-600 text-white shadow-sm'
+          ? 'bg-[#2563EB] text-white shadow-sm'
           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       )}
     >
@@ -113,26 +113,57 @@ export default function DesignerToolbox() {
               </div>
             )}
             {activeTool === 'amenity' && (
-              <select
-                className="w-full h-9 text-sm rounded-md border border-slate-200 bg-white px-2 outline-none focus:ring-2 focus:ring-indigo-500/20"
-                value={amenitySubtype}
-                onChange={(e) => setAmenitySubtype(e.target.value)}
-              >
-                {AMENITY_TYPES.map((a) => (
-                  <option key={a.id} value={a.id}>{a.label}</option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <p className="text-[10px] text-slate-500">Choose amenity to place</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {AMENITY_TYPES.map((a) => {
+                    const sel = amenitySubtype === a.id
+                    return (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => setAmenitySubtype(a.id)}
+                        title={a.label}
+                        className={cn(
+                          'flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-left text-[11px] font-medium transition-all',
+                          sel
+                            ? 'border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8] ring-1 ring-[#2563EB]/30'
+                            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                        )}
+                      >
+                        <span className="text-base leading-none">{a.icon}</span>
+                        <span className="truncate">{a.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             )}
             {activeTool === 'road' && (
-              <select
-                className="w-full h-9 text-sm rounded-md border border-slate-200 bg-white px-2 outline-none focus:ring-2 focus:ring-indigo-500/20"
-                value={roadSubtype}
-                onChange={(e) => setRoadSubtype(e.target.value)}
-              >
-                {ROAD_TYPES.map((r) => (
-                  <option key={r.id} value={r.id}>{r.label}</option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <p className="text-[10px] text-slate-500">Road type</p>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {ROAD_TYPES.map((r) => {
+                    const sel = roadSubtype === r.id
+                    return (
+                      <button
+                        key={r.id}
+                        type="button"
+                        onClick={() => setRoadSubtype(r.id)}
+                        className={cn(
+                          'flex items-center justify-between rounded-md border px-2.5 py-1.5 text-left text-xs font-medium transition-all',
+                          sel
+                            ? 'border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8] ring-1 ring-[#2563EB]/30'
+                            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                        )}
+                      >
+                        <span>{r.label}</span>
+                        <span className="text-[10px] text-slate-400">{r.defaultWidth}ft</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             )}
           </div>
         )}

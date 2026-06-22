@@ -155,7 +155,7 @@ export default function ViewerPlotDrawer({
                   </SelectContent>
                 </Select>
                 <Button
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
+                  className="w-full"
                   size="sm"
                   disabled={updatingStatus || statusDraft === plot.status}
                   onClick={() => onUpdateStatus(plot._id, statusDraft)}
@@ -168,7 +168,7 @@ export default function ViewerPlotDrawer({
 
           <div className="border-t border-slate-100 p-5">
             {canBook && onBookPlot && plot && (
-              <Button className="w-full bg-indigo-600 hover:bg-indigo-700" onClick={() => onBookPlot(plot)}>
+              <Button className="w-full" onClick={() => onBookPlot(plot)}>
                 Book Plot
               </Button>
             )}

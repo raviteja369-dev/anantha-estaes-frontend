@@ -169,14 +169,18 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
     const viewBottom = viewTop + height / viewport.scale
     const startX = Math.floor(viewLeft / step) * step
     const startY = Math.floor(viewTop / step) * step
+    const minor = 'rgba(120,113,108,0.10)'
+    const major = 'rgba(120,113,108,0.20)'
     for (let i = startX; i < viewRight + step; i += step) {
+      const isMajor = Math.round(i / step) % 5 === 0
       gridLines.push(
-        <Line key={`v${i}`} points={[i, startY, i, viewBottom + step]} stroke="rgba(100,116,139,0.25)" strokeWidth={1 / viewport.scale} listening={false} perfectDrawEnabled={false} />
+        <Line key={`v${i}`} points={[i, startY, i, viewBottom + step]} stroke={isMajor ? major : minor} strokeWidth={(isMajor ? 1.4 : 1) / viewport.scale} listening={false} perfectDrawEnabled={false} />
       )
     }
     for (let j = startY; j < viewBottom + step; j += step) {
+      const isMajor = Math.round(j / step) % 5 === 0
       gridLines.push(
-        <Line key={`h${j}`} points={[startX, j, viewRight + step, j]} stroke="rgba(100,116,139,0.25)" strokeWidth={1 / viewport.scale} listening={false} perfectDrawEnabled={false} />
+        <Line key={`h${j}`} points={[startX, j, viewRight + step, j]} stroke={isMajor ? major : minor} strokeWidth={(isMajor ? 1.4 : 1) / viewport.scale} listening={false} perfectDrawEnabled={false} />
       )
     }
   }
@@ -196,7 +200,7 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
   if (width < 10 || height < 10) return null
 
   return (
-    <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,#475569_0%,#334155_55%,#1e293b_100%)]">
       <Stage
         ref={stageRef}
         width={width}
@@ -211,7 +215,7 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
         onMouseLeave={() => { isPanning.current = false; cancelCreate() }}
         style={{ cursor, display: 'block' }}
       >
-        {/* Layer 1: background hit area (bottom) */}
+        {/* Layer 1: background hit area (bottom) — the "site" ground sheet */}
         <Layer>
           <Rect
             name="canvas-bg"
@@ -219,9 +223,15 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
             y={0}
             width={CANVAS_WORLD.width}
             height={CANVAS_WORLD.height}
-            fill="#F8FAFC"
-            stroke="#E2E8F0"
+            fillLinearGradientStartPoint={{ x: 0, y: 0 }}
+            fillLinearGradientEndPoint={{ x: 0, y: CANVAS_WORLD.height }}
+            fillLinearGradientColorStops={[0, '#f6f4ee', 1, '#ece8dd']}
+            stroke="#d6cfbf"
             strokeWidth={2 / viewport.scale}
+            shadowColor="#000000"
+            shadowBlur={40 / viewport.scale}
+            shadowOpacity={0.35}
+            shadowOffsetY={8 / viewport.scale}
             onMouseDown={handleBgMouseDown}
           />
         </Layer>
@@ -252,10 +262,11 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
                 y={createPreview.y}
                 width={Math.max(createPreview.width, 1)}
                 height={Math.max(createPreview.height, 1)}
-                fill="rgba(99,102,241,0.15)"
-                stroke="#6366F1"
+                fill="rgba(37,99,235,0.15)"
+                stroke="#2563EB"
                 strokeWidth={2 / viewport.scale}
                 dash={[8 / viewport.scale, 4 / viewport.scale]}
+                cornerRadius={3 / viewport.scale}
                 listening={false}
               />
               {previewLabel && (
@@ -264,7 +275,7 @@ export default function DesignerCanvas({ width, height, stageRef: externalRef })
                   y={createPreview.y + createPreview.height / 2}
                   text={previewLabel}
                   fontSize={14 / viewport.scale}
-                  fill="#4338CA"
+                  fill="#1D4ED8"
                   fontStyle="bold"
                   align="center"
                   verticalAlign="middle"

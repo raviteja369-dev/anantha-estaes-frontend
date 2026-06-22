@@ -51,7 +51,7 @@ export default function DesignerRightPanel({ phases }) {
             className={cn(
               'flex-1 py-3 text-xs font-semibold transition-colors',
               tab === t.id
-                ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50'
+                ? 'text-[#2563EB] border-b-2 border-[#2563EB] bg-[#EFF6FF]/60'
                 : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
             )}
           >
@@ -352,10 +352,10 @@ function AnalyticsTab({ analytics }) {
           </div>
         ))}
       </div>
-      <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-        <p className="text-[11px] font-medium text-indigo-600">Total Revenue</p>
-        <p className="text-xl font-bold text-indigo-900 mt-1">{formatCurrency(analytics.revenue)}</p>
-        <p className="text-[10px] text-indigo-500 mt-1">Based on plot prices in layout</p>
+      <div className="rounded-xl border border-[#DDD6FE] bg-[#EDE9FE] p-4">
+        <p className="text-[11px] font-medium text-[#7C3AED]">Total Revenue</p>
+        <p className="text-xl font-bold text-[#5B21B6] mt-1">{formatCurrency(analytics.revenue)}</p>
+        <p className="text-[10px] text-[#7C3AED] mt-1">Based on plot prices in layout</p>
       </div>
     </div>
   )

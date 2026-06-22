@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Pencil } from 'lucide-react'
+import { Plus, Trash2, Pencil, UserPlus, CheckCircle2 } from 'lucide-react'
 import { leadsAPI, employeesAPI, projectsAPI } from '@/services/api'
 import { useAuth } from '@/context/AuthContext'
 import DataTable from '@/components/shared/DataTable'
@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
 import PhoneInput from '@/components/shared/PhoneInput'
 import { isValidMobile, cn } from '@/lib/utils'
 
@@ -24,13 +23,6 @@ const STATUS_OPTIONS = [
   { value: 'converted', label: 'Completed' },
   { value: 'lost', label: 'Lost' },
 ]
-
-const statusColors = {
-  new: 'secondary', contacted: 'info', qualified: 'info', site_visit: 'warning',
-  negotiation: 'warning', converted: 'success', lost: 'destructive',
-}
-
-const statusLabel = (status) => STATUS_OPTIONS.find((s) => s.value === status)?.label || status.replace('_', ' ')
 
 const emptyForm = {
   name: '', mobile: '', email: '', source: 'walk-in', status: 'new', assignedEmployee: '', interestedProject: '',
@@ -57,6 +49,8 @@ export default function Leads() {
   const [editError, setEditError] = useState('')
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
+  const [convertTarget, setConvertTarget] = useState(null)
+  const [convertError, setConvertError] = useState('')
 
   const { data: leads, isLoading } = useQuery({ queryKey: ['leads'], queryFn: () => leadsAPI.getAll().then((r) => r.data) })
   const { data: employees } = useQuery({ queryKey: ['employees'], queryFn: () => employeesAPI.getAll().then((r) => r.data), enabled: isAdmin })
@@ -93,6 +87,23 @@ export default function Leads() {
     mutationFn: (id) => leadsAPI.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leads'] }),
   })
+
+  const convertMutation = useMutation({
+    mutationFn: (id) => leadsAPI.convert(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] })
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      setConvertTarget(null)
+      setConvertError('')
+    },
+    onError: (err) => setConvertError(err.response?.data?.message || 'Failed to convert lead'),
+  })
+
+  const openConvert = (lead) => {
+    setConvertTarget(lead)
+    setConvertError('')
+  }
 
   const openDialog = () => {
     setForm(emptyForm)
@@ -168,35 +179,38 @@ export default function Leads() {
     { key: 'project', label: 'Project', render: (r) => r.interestedProject?.name || '—' },
     { key: 'employee', label: 'Employee', render: (r) => r.assignedEmployee?.name || '—' },
     {
-      key: 'status',
-      label: 'Status',
-      render: (r) => (
-        <Badge variant={statusColors[r.status]}>{statusLabel(r.status)}</Badge>
-      ),
-    },
-    {
-      key: 'remark',
-      label: 'Remark',
-      render: (r) => (
-        <span className="text-xs text-muted-foreground max-w-[160px] truncate block" title={r.notes}>
-          {r.notes || '—'}
-        </span>
-      ),
-    },
-    ...(isAdmin ? [{
       key: 'actions',
       label: 'Actions',
       render: (r) => (
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(r)} title="Update status">
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(r._id)}>
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
+        <div className="flex items-center gap-1">
+          {r.convertedCustomer ? (
+            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Customer
+            </span>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 text-xs"
+              onClick={(e) => { e.stopPropagation(); openConvert(r) }}
+              title="Convert to customer"
+            >
+              <UserPlus className="h-3.5 w-3.5" /> Convert
+            </Button>
+          )}
+          {isAdmin && (
+            <>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(r) }} title="Update status">
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(r._id) }}>
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </>
+          )}
         </div>
       ),
-    }] : []),
+    },
   ]
 
   if (isLoading) return <PageLoader />
@@ -266,6 +280,37 @@ export default function Leads() {
               <Button className="w-full" onClick={handleEditDone} disabled={updateMutation.isPending}>
                 {updateMutation.isPending ? 'Saving...' : 'Done'}
               </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!convertTarget} onOpenChange={(open) => { if (!open) { setConvertTarget(null); setConvertError('') } }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Convert Lead to Customer</DialogTitle></DialogHeader>
+          {convertTarget && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                A customer record will be created from this lead and it will appear directly in the{' '}
+                <span className="font-medium text-foreground">Customers</span> list. The lead will be marked as completed.
+              </p>
+              <div className="rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm grid grid-cols-2 gap-2">
+                <span>Name: <strong>{convertTarget.name}</strong></span>
+                <span>Mobile: <strong>{convertTarget.mobile}</strong></span>
+                <span>Email: <strong>{convertTarget.email || '—'}</strong></span>
+                <span>Employee: <strong>{convertTarget.assignedEmployee?.name || '—'}</strong></span>
+              </div>
+              {convertError && (
+                <div className="rounded-lg bg-destructive/10 text-destructive text-sm p-3 text-center">{convertError}</div>
+              )}
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setConvertTarget(null)} disabled={convertMutation.isPending}>
+                  Cancel
+                </Button>
+                <Button className="flex-1" onClick={() => convertMutation.mutate(convertTarget._id)} disabled={convertMutation.isPending}>
+                  {convertMutation.isPending ? 'Converting...' : 'Convert to Customer'}
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>

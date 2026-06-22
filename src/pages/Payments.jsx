@@ -241,7 +241,7 @@ export default function Payments() {
             </div>
 
             {selectedPlot && (
-              <div className="rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs text-indigo-900 grid grid-cols-2 gap-1">
+              <div className="rounded-lg border border-primary/15 bg-primary/5 px-3 py-2 text-xs text-foreground grid grid-cols-2 gap-1">
                 <span>Project: <strong>{selectedPlot.project?.name}</strong></span>
                 <span>Phase: <strong>{selectedPlot.phase?.name}</strong></span>
                 <span>Plot: <strong>{selectedPlot.plotNumber}</strong></span>

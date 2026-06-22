@@ -54,9 +54,9 @@ function ToolButton({ icon: Icon, label, active, onClick, disabled, destructive,
           'hover:bg-blue-500/10 hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]',
         ],
         active && [
-          'bg-indigo-600 text-white',
-          'shadow-lg shadow-indigo-500/40',
-          'ring-1 ring-indigo-400/50',
+          'bg-[#2563EB] text-white',
+          'shadow-lg shadow-[#2563EB]/40',
+          'ring-1 ring-[#2563EB]/50',
         ],
         destructive && !active && 'text-red-400 hover:scale-105 hover:bg-red-500/10 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
         className
@@ -151,7 +151,7 @@ export default function DesignerToolbar({ onSave, onExport, onCenterView, onRese
         <div className="w-full max-md:min-w-full max-md:basis-full">
           {activeTool === 'amenity' && (
             <select
-              className="w-full text-[10px] bg-slate-900/90 border border-white/10 rounded-xl px-2 py-2 text-slate-200 outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full text-[10px] bg-slate-900/90 border border-white/10 rounded-xl px-2 py-2 text-slate-200 outline-none focus:ring-1 focus:ring-[#2563EB]"
               value={amenitySubtype}
               onChange={(e) => setAmenitySubtype(e.target.value)}
             >
@@ -162,7 +162,7 @@ export default function DesignerToolbar({ onSave, onExport, onCenterView, onRese
           )}
           {activeTool === 'road' && (
             <select
-              className="w-full text-[10px] bg-slate-900/90 border border-white/10 rounded-xl px-2 py-2 text-slate-200 outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full text-[10px] bg-slate-900/90 border border-white/10 rounded-xl px-2 py-2 text-slate-200 outline-none focus:ring-1 focus:ring-[#2563EB]"
               value={roadSubtype}
               onChange={(e) => setRoadSubtype(e.target.value)}
             >

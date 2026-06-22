@@ -1,26 +1,26 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { authAPI } from '@/services/api'
+import { authAPI, authStorage } from '@/services/api'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('user')
+    const saved = authStorage.getUser()
     return saved ? JSON.parse(saved) : null
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const token = authStorage.getToken()
     if (token) {
+      const remember = authStorage.isRemembered()
       authAPI.me()
         .then((res) => {
           setUser(res.data)
-          localStorage.setItem('user', JSON.stringify(res.data))
+          authStorage.set(token, res.data, remember)
         })
         .catch(() => {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
+          authStorage.clear()
           setUser(null)
         })
         .finally(() => setLoading(false))
@@ -31,15 +31,13 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const res = await authAPI.login({ email, password })
-    localStorage.setItem('token', res.data.token)
-    localStorage.setItem('user', JSON.stringify(res.data))
+    authStorage.set(res.data.token, res.data, true)
     setUser(res.data)
     return res.data
   }
 
   const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    authStorage.clear()
     setUser(null)
   }
 

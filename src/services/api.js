@@ -8,8 +8,36 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+// Auth storage helpers — persistent (localStorage, "remember me") or
+// session-only (sessionStorage, cleared when the browser closes).
+export const authStorage = {
+  getToken: () => sessionStorage.getItem('token') || localStorage.getItem('token'),
+  getUser: () => sessionStorage.getItem('user') || localStorage.getItem('user'),
+  isRemembered: () => localStorage.getItem('remember') === '1',
+  set: (token, user, remember) => {
+    const store = remember ? localStorage : sessionStorage
+    const other = remember ? sessionStorage : localStorage
+    store.setItem('token', token)
+    store.setItem('user', JSON.stringify(user))
+    other.removeItem('token')
+    other.removeItem('user')
+    localStorage.setItem('remember', remember ? '1' : '0')
+  },
+  clear: () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('remember')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
+  },
+  // Email prefill (kept across logout for convenience when "remember me" is on)
+  getRememberedEmail: () => localStorage.getItem('rememberedEmail') || '',
+  setRememberedEmail: (email) => localStorage.setItem('rememberedEmail', email),
+  clearRememberedEmail: () => localStorage.removeItem('rememberedEmail'),
+}
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = authStorage.getToken()
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
@@ -18,8 +46,7 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+      authStorage.clear()
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login'
       }
@@ -31,6 +58,7 @@ api.interceptors.response.use(
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
+  changePassword: (data) => api.put('/auth/change-password', data),
 }
 
 export const projectsAPI = {
@@ -96,6 +124,7 @@ export const leadsAPI = {
   getAll: () => api.get('/leads'),
   create: (data) => api.post('/leads', data),
   update: (id, data) => api.put(`/leads/${id}`, data),
+  convert: (id) => api.post(`/leads/${id}/convert`),
   delete: (id) => api.delete(`/leads/${id}`),
 }
 

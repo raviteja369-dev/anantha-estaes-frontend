@@ -78,7 +78,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <LayoutTemplate className="h-5 w-5 text-indigo-600" />
+            <LayoutTemplate className="h-5 w-5 text-primary" />
             Create Layout
           </DialogTitle>
         </DialogHeader>
@@ -90,7 +90,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
               id="project"
               value={projectId}
               onChange={(e) => { setProjectId(e.target.value); setPhaseId('') }}
-              className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full h-10 rounded-lg border border-border bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
               required
             >
               <option value="">Select project</option>
@@ -106,7 +106,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
               id="phase"
               value={phaseId}
               onChange={(e) => setPhaseId(e.target.value)}
-              className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full h-10 rounded-lg border border-border bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
               required
               disabled={!projectId}
             >
@@ -136,7 +136,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description for this layout"
               rows={3}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
+              className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none"
             />
           </div>
 
@@ -150,7 +150,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending ? 'Creating…' : 'Create Layout'}
             </Button>
           </div>
@@ -162,7 +162,7 @@ export default function CreateLayoutDialog({ open, onOpenChange, defaultProjectI
 
 export function CreateLayoutButton({ onClick, className }) {
   return (
-    <Button onClick={onClick} className={className || 'bg-indigo-600 hover:bg-indigo-700 shadow-sm'}>
+    <Button onClick={onClick} className={className || 'shadow-sm'}>
       <Plus className="h-4 w-4 mr-1.5" />
       Create Layout
     </Button>
